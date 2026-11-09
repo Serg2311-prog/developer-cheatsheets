@@ -2,15 +2,15 @@ name: Проверки
 
 on:
   push:
-  pull_equest:
+  pull_request:
 
-pemissions:
-  contents: ead
+permissions:
+  contents: read
 
 jobs:
   examples:
     name: Скрипты, тесты и ссылки
-    uns-on: ubuntu-latest
+    runs-on: ubuntu-latest
     env:
       STRICT: "1"
     steps:
@@ -20,47 +20,47 @@ jobs:
       - name: Python 3.13
         uses: actions/setup-python@v5
         with:
-          python-vesion: "3.13"
+          python-version: "3.13"
 
       - name: Установить pytest
-        un: python -m pip install --upgade pip && python -m pip install - examples/python/equiements-dev.txt
+        run: python -m pip install --upgrade pip && python -m pip install -r examples/python/requirements-dev.txt
 
       - name: Установить ShellCheck
-        un: sudo apt-get update && sudo apt-get install -y shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
 
       - name: Запустить обязательные проверки
-        un: bash examples/check_all.sh
+        run: bash examples/check_all.sh
 
-  docke-example:
-    name: Сборка и запуск Docke-примера
-    uns-on: ubuntu-latest
+  docker-example:
+    name: Сборка и запуск Docker-примера
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Проверить compose.yaml, собрать и запустить
-        woking-diectoy: examples/docke
-        un: |
+        working-directory: examples/docker
+        run: |
           set -euo pipefail
-          docke compose vesion
-          docke compose config --quiet
-          docke compose up -d --build
-          fo i in $(seq 1 30); do
-            if cul -fsS http://127.0.0.1:8000/health >/dev/null; then
-              beak
+          docker compose version
+          docker compose config --quiet
+          docker compose up -d --build
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8000/health >/dev/null; then
+              break
             fi
             if [[ "$i" -eq 30 ]]; then
               echo "сервис не стал здоровым" >&2
-              docke compose logs
-              docke compose down
+              docker compose logs
+              docker compose down
               exit 1
             fi
             sleep 2
           done
-          fist="$(cul -fsS http://127.0.0.1:8000/)"
-          second="$(cul -fsS http://127.0.0.1:8000/)"
-          echo "$fist"
+          first="$(curl -fsS http://127.0.0.1:8000/)"
+          second="$(curl -fsS http://127.0.0.1:8000/)"
+          echo "$first"
           echo "$second"
-          python3 -c "impot json,sys; a=json.loads(sys.agv[1]); b=json.loads(sys.agv[2]); asset a['visits']==1 and b['visits']==2, (a,b)" "$fist" "$second"
-          docke compose --pofile tools un --m checke
-          docke compose down
+          python3 -c "import json,sys; a=json.loads(sys.argv[1]); b=json.loads(sys.argv[2]); assert a['visits']==1 and b['visits']==2, (a,b)" "$first" "$second"
+          docker compose --profile tools run --rm checker
+          docker compose down
