@@ -18,7 +18,7 @@
 bash examples/check_all.sh
 ```
 
-Скрипт проверяет синтаксис всех `.sh` (и прогоняет ShellCheck, если он установлен), запускает Bash- и Git-примеры во временных каталогах, компилирует Python-код, запускает pytest и проверяет `compose.yaml` через `docker compose config`. Если инструмента нет, проверка помечается как `[SKIP]`, а не как ошибка. Код возврата 0 означает, что всё прошло успешно.
+Скрипт проверяет синтаксис всех `.sh` (и прогоняет ShellCheck, если он установлен), запускает Bash- и Git-примеры во временных каталогах, компилирует Python-код, запускает pytest, проверяет внутренние ссылки Markdown и `compose.yaml` через `docker compose config`. Если инструмента нет, проверка помечается как `[SKIP]`. В CI и при `STRICT=1` пропуск **обязательной** проверки (Bash-примеры, Git, Python/pytest, ссылки, `docker compose config`) — это ошибка, а не молчаливый успех. ShellCheck остаётся необязательным.
 
 Скрипт ничего не меняет вне временных каталогов и не собирает Docker-образы. Python ищется по порядку: `python3`, `python`, `py`.
 
@@ -80,11 +80,12 @@ python -m notes_app list --query ОТЧЁТ
 
 ## Git
 
-Оба скрипта создают одноразовый репозиторий во временном каталоге. Ваши репозитории и глобальный `~/.gitconfig` не затрагиваются.
+Скрипты создают одноразовый репозиторий во временном каталоге. Ваши репозитории и глобальный `~/.gitconfig` не затрагиваются.
 
 | Файл | Что показывает | Запуск |
 |---|---|---|
 | [`git/conflict_demo.sh`](git/conflict_demo.sh) | Две ветки меняют одну строку → конфликт при `merge` → маркеры конфликта → разрешение → merge-коммит | `bash examples/git/conflict_demo.sh` |
+| [`git/choose_side_demo.sh`](git/choose_side_demo.sh) | Выбор стороны через `--source=HEAD`/`MERGE_HEAD`/`REBASE_HEAD` и `git rm`/`git add` при delete/modify | `bash examples/git/choose_side_demo.sh` |
 | [`git/undo_demo.sh`](git/undo_demo.sh) | `stash`, `restore --staged`, `restore`, `reset --hard` и спасение коммитов через `reflog` | `bash examples/git/undo_demo.sh` |
 
 Чтобы самостоятельно поэкспериментировать с конфликтом, сохраните временный репозиторий: `KEEP=1 bash examples/git/conflict_demo.sh`. Путь к нему будет выведен в конце.
@@ -99,6 +100,8 @@ python -m notes_app list --query ОТЧЁТ
 | [`docker/Dockerfile`](docker/Dockerfile) | Фиксированный базовый образ, непривилегированный пользователь, `HEALTHCHECK`, JSON-форма `CMD` |
 | [`docker/.dockerignore`](docker/.dockerignore) | Что не отправлять в контекст сборки |
 | [`docker/compose.yaml`](docker/compose.yaml) | Сервис с томом и healthcheck, порт только на `127.0.0.1`, вспомогательный сервис в профиле `tools`, `depends_on` с `service_healthy` |
+
+`docker compose config` работает без запущенного daemon. Сборка образа и `compose up` нуждаются в Docker Engine. Если daemon недоступен (типичная ситуация, когда Docker Desktop выключен), используйте запуск через `python app.py` ниже; сборку проверяет GitHub Actions.
 
 ```bash
 cd examples/docker

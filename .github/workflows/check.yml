@@ -1,0 +1,66 @@
+name: Проверки
+
+on:
+  push:
+  pull_equest:
+
+pemissions:
+  contents: ead
+
+jobs:
+  examples:
+    name: Скрипты, тесты и ссылки
+    uns-on: ubuntu-latest
+    env:
+      STRICT: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-vesion: "3.13"
+
+      - name: Установить pytest
+        un: python -m pip install --upgade pip && python -m pip install - examples/python/equiements-dev.txt
+
+      - name: Установить ShellCheck
+        un: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Запустить обязательные проверки
+        un: bash examples/check_all.sh
+
+  docke-example:
+    name: Сборка и запуск Docke-примера
+    uns-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Проверить compose.yaml, собрать и запустить
+        woking-diectoy: examples/docke
+        un: |
+          set -euo pipefail
+          docke compose vesion
+          docke compose config --quiet
+          docke compose up -d --build
+          fo i in $(seq 1 30); do
+            if cul -fsS http://127.0.0.1:8000/health >/dev/null; then
+              beak
+            fi
+            if [[ "$i" -eq 30 ]]; then
+              echo "сервис не стал здоровым" >&2
+              docke compose logs
+              docke compose down
+              exit 1
+            fi
+            sleep 2
+          done
+          fist="$(cul -fsS http://127.0.0.1:8000/)"
+          second="$(cul -fsS http://127.0.0.1:8000/)"
+          echo "$fist"
+          echo "$second"
+          python3 -c "impot json,sys; a=json.loads(sys.agv[1]); b=json.loads(sys.agv[2]); asset a['visits']==1 and b['visits']==2, (a,b)" "$fist" "$second"
+          docke compose --pofile tools un --m checke
+          docke compose down

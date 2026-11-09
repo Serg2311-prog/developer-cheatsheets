@@ -13,6 +13,7 @@
 - [Проверка примеров](#проверка-примеров)
 - [Структура репозитория](#структура-репозитория)
 - [Окружение](#окружение)
+- [Лицензия](#лицензия)
 
 ## Разделы
 
@@ -121,13 +122,14 @@
 bash examples/check_all.sh
 ```
 
-Скрипт проверяет синтаксис Bash-скриптов, запускает Bash- и Git-примеры во временных каталогах, тесты pytest для Python-проекта и валидирует `compose.yaml`. Недостающие инструменты пропускаются с пометкой `[SKIP]`. Подробности — в [examples/README.md](examples/README.md).
+Скрипт проверяет синтаксис Bash-скриптов, запускает Bash- и Git-примеры во временных каталогах, тесты pytest, внутренние ссылки Markdown и `docker compose config`. Локально отсутствующий инструмент помечается `[SKIP]`. В CI (`STRICT=1`) пропуск обязательной проверки — это ошибка. Подробности — в [examples/README.md](examples/README.md). GitHub Actions дополнительно собирает и запускает Docker-пример.
 
 ## Структура репозитория
 
 ```text
 developer-cheatsheets/
 ├── README.md               # вы здесь: навигация и оглавление
+├── LICENSE                 # MIT: код примеров и текст справочника
 ├── SOURCES.md              # ссылки на официальную документацию
 ├── bash/README.md          # Bash, утилиты, Git Bash, WSL
 ├── python/README.md        # Python, pip, venv, pytest
@@ -138,8 +140,10 @@ developer-cheatsheets/
 │   ├── check_all.sh        # проверка всех примеров
 │   ├── bash/               # шаблон скрипта, статистика по логам, резервное копирование
 │   ├── python/             # CLI-приложение заметок + тесты pytest
-│   ├── git/                # демонстрация конфликта слияния и восстановления через reflog
+│   ├── git/                # конфликт слияния, выбор стороны, reflog
 │   └── docker/             # Dockerfile, compose.yaml и HTTP-сервис
+├── tools/                  # проверка внутренних ссылок Markdown
+├── .github/workflows/      # GitHub Actions
 ├── .gitattributes          # LF для .sh, Dockerfile и YAML
 └── .gitignore
 ```
@@ -148,12 +152,16 @@ developer-cheatsheets/
 
 Примеры рассчитаны на следующие версии и проверены на них:
 
-| Инструмент | Минимальная версия | Проверено |
+| Инструмент | Минимальная версия | Проверено в этом репозитории |
 |---|---|---|
-| Bash | 4.0 (macOS по умолчанию поставляется с 3.2: установите свежий Bash через Homebrew) | 5.2 (Git Bash для Windows) |
-| Python | 3.10 | 3.13 |
-| pytest | 8.0 | 9.0 |
-| Git | 2.28 (`git init -b`), 2.23 (`git switch`, `git restore`) | 2.51 |
-| Docker | Engine 23+, Compose v2 | Docker CLI 29.3; `compose.yaml` проверен через `docker compose config` |
+| Bash | 4.0 (`declare -A`, `${var^^}`; системный Bash 3.2 на macOS недостаточен) | 5.2.37, Git Bash для Windows |
+| Python | 3.10 (`match`, `list[str]`, `dict \| dict`) | 3.13.7 |
+| pytest | 8.0 | 9.0.3 |
+| Git | 2.28 (`git init -b`; `switch`/`restore` — с 2.23, `zdiff3` — с 2.35) | 2.51.2 (Windows) |
+| Docker | Engine 23+, Compose v2 (`docker compose` с пробелом) | CLI 29.3, Compose v5.1.1; `compose config` без daemon. Сборка образа — в GitHub Actions. Локальный Docker daemon **не был запущен** |
 
-В Windows команды Bash выполняйте в **Git Bash** или **WSL**, а не в PowerShell. Особенности обеих сред описаны в разделах [Git Bash в Windows](bash/README.md#git-bash-в-windows) и [WSL](bash/README.md#wsl).
+В Windows команды Bash выполняйте в **Git Bash** или **WSL**, а не в PowerShell. Особенности обеих сред описаны в разделах [Git Bash в Windows](bash/README.md#git-bash-в-windows) и [WSL](bash/README.md#wsl). Дистрибутив WSL с Bash в этой среде не установлен, поэтому примеры прогнаны в Git Bash, а не в WSL.
+
+## Лицензия
+
+Собственный текст справочника и код в `examples/` распространяются по лицензии [MIT](LICENSE). Это разрешает использование, копирование и изменение при сохранении уведомления об авторском праве. Официальная документация Bash, Python, Git и Docker, на которую ссылается [SOURCES.md](SOURCES.md), принадлежит их правообладателям и здесь не воспроизводится.

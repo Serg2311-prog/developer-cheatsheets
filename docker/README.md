@@ -2,7 +2,7 @@
 
 [Главная](../README.md) · [Bash](../bash/README.md) · [Python](../python/README.md) · [Git](../git/README.md) · **Docker** · [Примеры](../examples/README.md) · [Источники](../SOURCES.md)
 
-Шпаргалка по Docker Engine 25+ и Docker Compose v2 (команда `docker compose` с пробелом). Учебный проект с `Dockerfile` и `compose.yaml` лежит в [`examples/docker`](../examples/docker).
+Шпаргалка по Docker Engine 23+ и Docker Compose v2 (команда `docker compose` с пробелом). Проверено: Docker CLI 29.3, Compose v5.1.1; `docker compose config` не требует запущенного daemon. Сборка и запуск учебного образа проверяются в GitHub Actions. Учебный проект с `Dockerfile` и `compose.yaml` лежит в [`examples/docker`](../examples/docker).
 
 > [!WARNING]
 > Пометка **⚠️ Опасно** означает, что команда удаляет контейнеры, образы или **тома с данными** (базы данных, загрузки пользователей). Данные внутри контейнера без тома исчезают вместе с контейнером. Команды `prune`, `rm -v`, `down -v` подтверждения либо не спрашивают, либо спрашивают один раз на всё сразу.
@@ -383,7 +383,7 @@ docker exec -it dev-postgres psql -U postgres
 
 Данные сохранятся в томе `dev-pgdata` даже после `docker rm -f dev-postgres`.
 
-**2. Собрать и запустить учебный сервис из `examples/docker`.**
+**2. Собрать и запустить учебный сервис из `examples/docker`.** Нужен запущенный Docker daemon (Docker Desktop или engine в Linux). Если daemon недоступен, сервис всё равно можно запустить через `python app.py` — см. [`examples/README.md`](../examples/README.md).
 
 ```bash
 cd examples/docker

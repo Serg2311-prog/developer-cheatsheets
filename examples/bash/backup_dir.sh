@@ -22,15 +22,28 @@ dest_dir="${2:-./backups}"
 mkdir -p -- "$dest_dir"
 
 src_abs="$(cd -- "$src" && pwd)"
+dest_abs="$(cd -- "$dest_dir" && pwd)"
 name="$(basename -- "$src_abs")"
-archive="$dest_dir/${name}-$(date +%Y%m%d-%H%M%S).tar.gz"
+
+if [[ "$dest_abs" == "$src_abs" ]]; then
+  echo "Каталог архивов не должен совпадать с источником: $dest_abs" >&2
+  exit 1
+fi
+
+archive="$dest_abs/${name}-$(date +%Y%m%d-%H%M%S).tar.gz"
 
 if [[ -e "$archive" ]]; then
   echo "Архив уже существует, не перезаписываю: $archive" >&2
   exit 1
 fi
 
-tar -czf "$archive" -C "$(dirname -- "$src_abs")" "$name"
+tar_excludes=()
+if [[ "$dest_abs" == "$src_abs"/* ]]; then
+  rel="${dest_abs#"$src_abs"/}"
+  tar_excludes=(--exclude="$name/$rel")
+fi
+
+tar -czf "$archive" "${tar_excludes[@]}" -C "$(dirname -- "$src_abs")" "$name"
 
 echo "Создан архив: $archive"
 echo "Размер: $(du -h "$archive" | cut -f1)"

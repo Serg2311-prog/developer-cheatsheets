@@ -4,16 +4,31 @@
 #
 # Запуск из корня репозитория:
 #   bash examples/check_all.sh
+#
+# STRICT=1 (или переменная CI) — отсутствие обязательных инструментов считается ошибкой,
+# а не пропуском. Так устроен GitHub Actions.
 
 set -uo pipefail
 
 examples_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd -- "$examples_dir/.." && pwd)"
 failed=0
 passed=0
+skipped=0
+strict=0
+if [[ "${STRICT:-0}" == "1" || "${CI:-}" == "true" ]]; then
+  strict=1
+fi
 
 ok()   { printf '  [OK]   %s\n' "$*"; passed=$((passed + 1)); }
 fail() { printf '  [FAIL] %s\n' "$*"; failed=$((failed + 1)); }
-skip() { printf '  [SKIP] %s\n' "$*"; }
+skip() {
+  printf '  [SKIP] %s\n' "$*"
+  skipped=$((skipped + 1))
+  if (( strict )); then
+    fail "обязательная проверка пропущена (STRICT=1): $*"
+  fi
+}
 
 run_check() {
   local title="$1"; shift
@@ -44,7 +59,8 @@ done
 if command -v shellcheck >/dev/null 2>&1; then
   run_check "shellcheck" shellcheck "$examples_dir"/bash/*.sh "$examples_dir"/git/*.sh "$examples_dir"/check_all.sh
 else
-  skip "shellcheck не установлен"
+  printf '  [SKIP] %s\n' "shellcheck не установлен (необязательная проверка)"
+  skipped=$((skipped + 1))
 fi
 run_check "safe_script_template.sh" bash "$examples_dir/bash/safe_script_template.sh" -n Тест a b
 run_check "log_stats.sh" bash "$examples_dir/bash/log_stats.sh"
@@ -53,11 +69,34 @@ backup_tmp="$(mktemp -d)"
 run_check "backup_dir.sh" bash "$examples_dir/bash/backup_dir.sh" "$examples_dir/bash" "$backup_tmp"
 rm -rf -- "$backup_tmp"
 
+nest="$(mktemp -d)"
+mkdir -p "$nest/src"
+printf 'data\n' > "$nest/src/f.txt"
+if bash "$examples_dir/bash/backup_dir.sh" "$nest/src" "$nest/src/backups" >/dev/null \
+   && sleep 1 \
+   && bash "$examples_dir/bash/backup_dir.sh" "$nest/src" "$nest/src/backups" >/dev/null; then
+  nested=0
+  for archive in "$nest/src/backups"/*.tar.gz; do
+    if tar -tzf "$archive" | grep -q '/backups/'; then
+      nested=1
+    fi
+  done
+  if (( nested )); then
+    fail "backup_dir.sh не должен класть каталог архивов внутрь архива"
+  else
+    ok "backup_dir.sh исключает каталог архивов"
+  fi
+else
+  fail "backup_dir.sh (каталог архивов внутри источника)"
+fi
+rm -rf -- "$nest"
+
 echo
 echo "== Git"
 if command -v git >/dev/null 2>&1; then
   run_check "conflict_demo.sh" bash "$examples_dir/git/conflict_demo.sh"
   run_check "undo_demo.sh" bash "$examples_dir/git/undo_demo.sh"
+  run_check "choose_side_demo.sh" bash "$examples_dir/git/choose_side_demo.sh"
 else
   skip "git не установлен"
 fi
@@ -72,6 +111,7 @@ if py="$(find_python)"; then
   else
     skip "pytest не установлен: $py -m pip install -r examples/python/requirements-dev.txt"
   fi
+  run_check "внутренние ссылки Markdown" "$py" "$repo_root/tools/check_markdown_links.py" --root "$repo_root"
 else
   skip "Python 3.10+ не найден"
 fi
@@ -85,5 +125,5 @@ else
 fi
 
 echo
-echo "Итого: успешно $passed, с ошибками $failed"
+echo "Итого: успешно $passed, с ошибками $failed, пропусков $skipped"
 [[ $failed -eq 0 ]]

@@ -2,7 +2,7 @@
 
 [Главная](../README.md) · [Bash](../bash/README.md) · **Python** · [Git](../git/README.md) · [Docker](../docker/README.md) · [Примеры](../examples/README.md) · [Источники](../SOURCES.md)
 
-Шпаргалка по Python 3.10+ и основным инструментам: pip, venv, pytest. Примеры из таблиц можно вставить в REPL (`python`) и сразу проверить. Готовый проект для экспериментов лежит в [`examples/python`](../examples/python).
+Шпаргалка по Python 3.10+ (`match`, `list[str]`, объединение словарей `|`) и основным инструментам: pip, venv, pytest 8+. Проверено: Python 3.13.7, pytest 9.0.3. Примеры из таблиц можно вставить в REPL (`python`) и сразу проверить. Готовый проект для экспериментов лежит в [`examples/python`](../examples/python).
 
 > [!WARNING]
 > Пометка **⚠️ Опасно** означает, что код или команда могут безвозвратно удалить или перезаписать файлы либо сломать окружение. Python не спрашивает подтверждения: `Path.unlink()`, `shutil.rmtree()` и `write_text()` срабатывают сразу.
@@ -255,7 +255,7 @@ with timer("загрузка"):
 | `rename` / `replace` | Переименовать или переместить | `tmp.replace(target)` | ⚠️ **Опасно:** `replace` молча перезаписывает цель. `rename` в Windows при существующей цели выбрасывает ошибку, а в Linux — перезаписывает |
 | `unlink` | Удалить файл | `p.unlink(missing_ok=True)` | ⚠️ **Опасно:** удаляет без корзины |
 | `rmdir` | Удалить **пустой** каталог | `Path("empty").rmdir()` | Непустой каталог не удалит |
-| `shutil.rmtree` | Удалить каталог со всем содержимым | `shutil.rmtree(build_dir)` | ⚠️ **Опасно:** аналог `rm -rf`. Проверьте путь перед вызовом |
+| `shutil.rmtree` | Удалить каталог со всем содержимым | `shutil.rmtree(build_dir)` | ⚠️ **Опасно:** аналог `rm -rf`. Проверьте `Path(build_dir).resolve()` перед вызовом: опечатка в пути удалит другой каталог |
 | `shutil.copy2` / `copytree` | Копировать файл / дерево | `shutil.copytree("src", "backup", dirs_exist_ok=True)` | ⚠️ `copy2` и `copytree(dirs_exist_ok=True)` перезаписывают совпадающие файлы |
 | `tempfile.TemporaryDirectory` | Временный каталог с автоудалением | `with TemporaryDirectory() as d: ...` | Подходит для тестов и промежуточных файлов |
 
