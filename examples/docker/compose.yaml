@@ -1,0 +1,41 @@
+# Учебный стек: веб-сервис со счётчиком посещений в именованном томе
+# и вспомогательный контейнер, который обращается к нему по имени сервиса.
+#
+# Из каталога examples/docker:
+#   docker compose up -d --build        # собрать и запустить в фоне
+#   curl http://localhost:8000/          # каждый запрос увеличивает счётчик
+#   docker compose run --rm checker      # запрос к web изнутри сети Compose
+#   docker compose logs -f web           # логи (Ctrl+C — выйти из просмотра)
+#   docker compose down                  # остановить; том visits сохранится
+#   docker compose down -v               # ВНИМАНИЕ: удалит и том со счётчиком
+
+name: cheatsheet
+
+services:
+  web:
+    build: .
+    image: cheatsheet-web:dev
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      DATA_DIR: /data
+    volumes:
+      - visits:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  checker:
+    image: curlimages/curl:8.11.1
+    profiles: ["tools"]
+    depends_on:
+      web:
+        condition: service_healthy
+    command: ["-sS", "http://web:8000/"]
+
+volumes:
+  visits:

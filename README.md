@@ -1,0 +1,159 @@
+# Developer Cheatsheets
+
+**Главная** · [Bash](bash/README.md) · [Python](python/README.md) · [Git](git/README.md) · [Docker](docker/README.md) · [Примеры](examples/README.md) · [Источники](SOURCES.md)
+
+Русскоязычный справочник по четырём инструментам, с которыми разработчик работает каждый день: **Bash**, **Python**, **Git** и **Docker**. Для каждой команды указаны назначение, проверяемый пример и подводные камни. Кроме таблиц, в каждом разделе есть практические сценарии и разбор частых ошибок. Команды, которые могут уничтожить данные, явно помечены.
+
+## Оглавление
+
+- [Разделы](#разделы)
+- [Подробное содержание](#подробное-содержание)
+- [Условные обозначения](#условные-обозначения)
+- [Как пользоваться](#как-пользоваться)
+- [Проверка примеров](#проверка-примеров)
+- [Структура репозитория](#структура-репозитория)
+- [Окружение](#окружение)
+
+## Разделы
+
+| Раздел | О чём | Начать с |
+|---|---|---|
+| [Bash](bash/README.md) | Навигация, файлы, поиск, процессы, права, пайпы, переменные, скрипты, Git Bash в Windows и WSL | [Пайпы и перенаправления](bash/README.md#пайпы-и-перенаправления) |
+| [Python](python/README.md) | Синтаксис, коллекции, функции, классы, исключения, pathlib, JSON, pip, venv, запуск модулей, pytest | [venv](python/README.md#venv) |
+| [Git](git/README.md) | init, clone, add, commit, status, log, diff, branch, switch, merge, rebase, stash, reset, restore, remote, pull, push, конфликты | [Конфликт слияния](git/README.md#конфликт-слияния) |
+| [Docker](docker/README.md) | Образы, контейнеры, build, run, exec, logs, тома, сети, Docker Compose, диагностика и очистка | [Docker Compose](docker/README.md#docker-compose) |
+| [Примеры](examples/README.md) | Рабочие скрипты и мини-проекты к каждому разделу и скрипт проверки | [Проверить всё одной командой](examples/README.md#проверить-всё-одной-командой) |
+| [Источники](SOURCES.md) | Ссылки на официальную документацию | — |
+
+## Подробное содержание
+
+**[Bash](bash/README.md)**
+[Навигация](bash/README.md#навигация) ·
+[Файлы и каталоги](bash/README.md#файлы-и-каталоги) ·
+[Просмотр содержимого](bash/README.md#просмотр-содержимого) ·
+[Поиск](bash/README.md#поиск) ·
+[Процессы и задания](bash/README.md#процессы-и-задания) ·
+[Права доступа](bash/README.md#права-доступа) ·
+[Пайпы и перенаправления](bash/README.md#пайпы-и-перенаправления) ·
+[Обработка текста](bash/README.md#обработка-текста-в-конвейере) ·
+[Переменные и окружение](bash/README.md#переменные-и-окружение) ·
+[Скрипты](bash/README.md#скрипты) ·
+[Git Bash в Windows](bash/README.md#git-bash-в-windows) ·
+[WSL](bash/README.md#wsl) ·
+[Сценарии](bash/README.md#практические-сценарии) ·
+[Частые ошибки](bash/README.md#частые-ошибки)
+
+**[Python](python/README.md)**
+[Запуск интерпретатора](python/README.md#запуск-интерпретатора) ·
+[Синтаксис](python/README.md#синтаксис) ·
+[Строки](python/README.md#строки) ·
+[Коллекции](python/README.md#коллекции) ·
+[Функции](python/README.md#функции) ·
+[Классы](python/README.md#классы) ·
+[Исключения](python/README.md#исключения) ·
+[pathlib](python/README.md#pathlib-и-файлы) ·
+[JSON](python/README.md#json) ·
+[pip](python/README.md#pip) ·
+[venv](python/README.md#venv) ·
+[Запуск модулей](python/README.md#запуск-модулей) ·
+[pytest](python/README.md#pytest) ·
+[Сценарии](python/README.md#практические-сценарии) ·
+[Частые ошибки](python/README.md#частые-ошибки)
+
+**[Git](git/README.md)**
+[Как устроен Git](git/README.md#как-устроен-git) ·
+[Настройка](git/README.md#настройка) ·
+[init и clone](git/README.md#init-и-clone) ·
+[status, add, commit](git/README.md#status-add-commit) ·
+[log](git/README.md#log-и-show) ·
+[diff](git/README.md#diff) ·
+[branch и switch](git/README.md#branch-и-switch) ·
+[merge](git/README.md#merge) ·
+[rebase](git/README.md#rebase) ·
+[stash](git/README.md#stash) ·
+[restore, reset, revert, clean](git/README.md#restore-reset-revert-clean) ·
+[remote, fetch, pull, push](git/README.md#remote-fetch-pull-push) ·
+[Конфликт слияния](git/README.md#конфликт-слияния) ·
+[reflog](git/README.md#восстановление-и-reflog) ·
+[.gitignore](git/README.md#gitignore-и-gitattributes) ·
+[Сценарии](git/README.md#практические-сценарии) ·
+[Частые ошибки](git/README.md#частые-ошибки)
+
+**[Docker](docker/README.md)**
+[Понятия](docker/README.md#основные-понятия) ·
+[Images](docker/README.md#images) ·
+[Containers](docker/README.md#containers) ·
+[Флаги run](docker/README.md#флаги-docker-run) ·
+[Build и Dockerfile](docker/README.md#build-и-dockerfile) ·
+[exec](docker/README.md#exec) ·
+[logs](docker/README.md#logs) ·
+[Volumes](docker/README.md#volumes) ·
+[Networks](docker/README.md#networks) ·
+[Compose](docker/README.md#docker-compose) ·
+[Диагностика](docker/README.md#диагностика) ·
+[Очистка](docker/README.md#очистка) ·
+[Docker в Windows](docker/README.md#docker-в-windows) ·
+[Сценарии](docker/README.md#практические-сценарии) ·
+[Частые ошибки](docker/README.md#частые-ошибки)
+
+## Условные обозначения
+
+| Обозначение | Значение |
+|---|---|
+| ⚠️ **Опасно** | Команда может безвозвратно удалить или перезаписать данные, уничтожить незакоммиченную работу или переписать общую историю. Прочитайте замечание в той же строке **до** запуска |
+| ⚠️ **Очень опасно** | Последствия затрагивают не только вас: чужие коммиты на сервере, все данные Docker и т. п. |
+| `ИМЯ`, `ПУТЬ`, `ХЕШ` | Заглушки: подставьте своё значение |
+| `<PID>` | То же — заглушка, угловые скобки вводить не нужно |
+| `# комментарий` | Пояснение внутри блока кода, вводить его не нужно |
+
+Таблицы во всех разделах устроены одинаково: **команда — назначение — пример — важные замечания**.
+
+## Как пользоваться
+
+- **Ищете команду** — откройте нужный раздел и найдите её через `Ctrl+F`: у каждой темы своя таблица.
+- **Решаете задачу** — начните с раздела «Практические сценарии»: там готовые последовательности команд для типовых ситуаций.
+- **Что-то пошло не так** — загляните в «Частые ошибки». Там собраны типичные сообщения об ошибках и способы их исправить.
+- **Учитесь** — запустите примеры из [`examples/`](examples/README.md). Опасные Git-команды можно безопасно потренировать в одноразовом репозитории: `bash examples/git/undo_demo.sh`.
+
+## Проверка примеров
+
+```bash
+bash examples/check_all.sh
+```
+
+Скрипт проверяет синтаксис Bash-скриптов, запускает Bash- и Git-примеры во временных каталогах, тесты pytest для Python-проекта и валидирует `compose.yaml`. Недостающие инструменты пропускаются с пометкой `[SKIP]`. Подробности — в [examples/README.md](examples/README.md).
+
+## Структура репозитория
+
+```text
+developer-cheatsheets/
+├── README.md               # вы здесь: навигация и оглавление
+├── SOURCES.md              # ссылки на официальную документацию
+├── bash/README.md          # Bash, утилиты, Git Bash, WSL
+├── python/README.md        # Python, pip, venv, pytest
+├── git/README.md           # Git и разрешение конфликтов
+├── docker/README.md        # Docker и Docker Compose
+├── examples/
+│   ├── README.md           # описание примеров
+│   ├── check_all.sh        # проверка всех примеров
+│   ├── bash/               # шаблон скрипта, статистика по логам, резервное копирование
+│   ├── python/             # CLI-приложение заметок + тесты pytest
+│   ├── git/                # демонстрация конфликта слияния и восстановления через reflog
+│   └── docker/             # Dockerfile, compose.yaml и HTTP-сервис
+├── .gitattributes          # LF для .sh, Dockerfile и YAML
+└── .gitignore
+```
+
+## Окружение
+
+Примеры рассчитаны на следующие версии и проверены на них:
+
+| Инструмент | Минимальная версия | Проверено |
+|---|---|---|
+| Bash | 4.0 (macOS по умолчанию поставляется с 3.2: установите свежий Bash через Homebrew) | 5.2 (Git Bash для Windows) |
+| Python | 3.10 | 3.13 |
+| pytest | 8.0 | 9.0 |
+| Git | 2.28 (`git init -b`), 2.23 (`git switch`, `git restore`) | 2.51 |
+| Docker | Engine 23+, Compose v2 | Docker CLI 29.3; `compose.yaml` проверен через `docker compose config` |
+
+В Windows команды Bash выполняйте в **Git Bash** или **WSL**, а не в PowerShell. Особенности обеих сред описаны в разделах [Git Bash в Windows](bash/README.md#git-bash-в-windows) и [WSL](bash/README.md#wsl).
