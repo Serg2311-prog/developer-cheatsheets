@@ -11,3 +11,5 @@ examples/python/notes.json
 examples/docker/data/
 backups/
 .audit-tmp/
+.audit-tmp*.txt
+ci-errors.txt

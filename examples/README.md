@@ -19,7 +19,7 @@
 bash examples/check_all.sh
 ```
 
-Скрипт проверяет синтаксис всех `.sh` (и прогоняет ShellCheck, если он установлен), запускает Bash- и Git-примеры во временных каталогах, компилирует Python-код, запускает pytest, проверяет внутренние ссылки Markdown и `compose.yaml` через `docker compose config`. Если доступен `pwsh` или `powershell`, вызывается [`powershell/Invoke-Checks.ps1`](powershell/Invoke-Checks.ps1). Если инструмента нет, проверка помечается как `[SKIP]`. В CI и при `STRICT=1` пропуск **обязательной** проверки (Bash-примеры, Git, Python/pytest, ссылки, `docker compose config`) — это ошибка, а не молчаливый успех. ShellCheck и PowerShell на Ubuntu остаются необязательными; полный прогон PowerShell с PSScriptAnalyzer — в GitHub Actions на `windows-latest`.
+Скрипт проверяет синтаксис всех `.sh` (и прогоняет ShellCheck, если он установлен), запускает Bash- и Git-примеры во временных каталогах, компилирует Python-код, запускает pytest, проверяет внутренние ссылки Markdown и `compose.yaml` через `docker compose config`. Если доступен `pwsh` или `powershell`, вызывается [`powershell/Invoke-Checks.ps1`](powershell/Invoke-Checks.ps1) (при `STRICT=1`/`CI` — с `-Strict`). Если инструмента нет, проверка помечается как `[SKIP]`. В CI и при `STRICT=1` пропуск **обязательной** проверки (Bash-примеры, Git, Python/pytest, ShellCheck, ссылки, `docker compose config`) — это ошибка. Отсутствие самой оболочки PowerShell на Ubuntu по-прежнему необязательный skip; полный прогон с PSScriptAnalyzer также идёт в GitHub Actions на `windows-latest`.
 
 Скрипт ничего не меняет вне временных каталогов и не собирает Docker-образы. Python ищется по порядку: `python3`, `python`, `py`.
 

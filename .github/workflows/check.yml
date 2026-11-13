@@ -42,6 +42,8 @@ jobs:
         working-directory: examples/docker
         run: |
           set -euo pipefail
+          cleanup() { docker compose down; }
+          trap cleanup EXIT
           docker compose version
           docker compose config --quiet
           docker compose up -d --build
@@ -52,7 +54,6 @@ jobs:
             if [[ "$i" -eq 30 ]]; then
               echo "сервис не стал здоровым" >&2
               docker compose logs
-              docker compose down
               exit 1
             fi
             sleep 2
@@ -63,7 +64,6 @@ jobs:
           echo "$second"
           python3 -c "import json,sys; a=json.loads(sys.argv[1]); b=json.loads(sys.argv[2]); assert a['visits']==1 and b['visits']==2, (a,b)" "$first" "$second"
           docker compose --profile tools run --rm checker
-          docker compose down
 
   powershell:
     name: PowerShell-скрипты

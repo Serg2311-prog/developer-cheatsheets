@@ -140,7 +140,7 @@
 bash examples/check_all.sh
 ```
 
-Скрипт проверяет синтаксис Bash-скриптов, запускает Bash- и Git-примеры во временных каталогах, тесты pytest, внутренние ссылки Markdown и `docker compose config`. Если доступен PowerShell, дополнительно вызывается `examples/powershell/Invoke-Checks.ps1` (на Ubuntu в CI это необязательный skip). Локально отсутствующий инструмент помечается `[SKIP]`. В CI (`STRICT=1`) пропуск обязательной проверки — это ошибка. Подробности — в [examples/README.md](examples/README.md). GitHub Actions дополнительно собирает Docker-пример и на `windows-latest` прогоняет PowerShell-скрипты через PSScriptAnalyzer.
+Скрипт проверяет синтаксис Bash-скриптов, запускает Bash- и Git-примеры во временных каталогах, тесты pytest, внутренние ссылки Markdown и `docker compose config`. Если доступен PowerShell, вызывается `examples/powershell/Invoke-Checks.ps1` (при `STRICT=1` — с `-Strict`). Отсутствие PowerShell на Ubuntu — необязательный skip. Локально отсутствующий обязательный инструмент при `STRICT=1` (включая ShellCheck) — ошибка. Подробности — в [examples/README.md](examples/README.md). GitHub Actions дополнительно собирает Docker-пример и на `windows-latest` прогоняет PowerShell через PSScriptAnalyzer.
 
 ## Структура репозитория
 

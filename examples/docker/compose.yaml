@@ -4,7 +4,7 @@
 # Из каталога examples/docker:
 #   docker compose up -d --build        # собрать и запустить в фоне
 #   curl http://localhost:8000/          # каждый запрос увеличивает счётчик
-#   docker compose run --rm checker      # запрос к web изнутри сети Compose
+#   docker compose --profile tools run --rm checker  # нужен профиль tools
 #   docker compose logs -f web           # логи (Ctrl+C — выйти из просмотра)
 #   docker compose down                  # остановить; том visits сохранится
 #   docker compose down -v               # ВНИМАНИЕ: удалит и том со счётчиком

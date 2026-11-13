@@ -42,7 +42,7 @@ PowerShell работает с **объектами**, а не только с �
 | `$true` / `$false` / `$null` | Логические и пустое значение | `if ($null -eq $x) { … }` | Сравнивайте `$null` слева: `$null -eq $x` |
 | `Write-Output` / `Write-Host` | Вывод в конвейер / на экран | `Write-Output 'ok'` | `Write-Host` **не** попадает в конвейер |
 | `Write-Error` / `Write-Warning` | Ошибка / предупреждение | `Write-Warning 'устарело'` | Код выхода смотрите через `$LASTEXITCODE` у внешних программ |
-| `Get-Variable` | Список переменных сессии | `Get-Variable PATH` | Автоматические: `$?`, `$LASTEXITCODE`, `$PSVersionTable` |
+| `Get-Variable` | Список переменных сессии | `Get-Variable PSVersionTable` | Окружение Windows/PATH — это `$env:PATH` или `Get-ChildItem Env:PATH`, а не `Get-Variable PATH`. Автоматические: `$?`, `$LASTEXITCODE` |
 | `\|` | Конвейер объектов | `Get-Process \| Where-Object CPU -gt 10` | Справа обычно cmdlet, принимающий pipeline |
 | `ForEach-Object` / `%` | Обработать каждый объект | `1..3 \| ForEach-Object { $_ * 2 }` | `$_` — текущий объект |
 | `Where-Object` / `?` | Фильтр | `Get-ChildItem \| Where-Object Length -gt 1KB` | Упрощённый синтаксис: `Where-Object Length -gt 1KB` |
@@ -75,8 +75,8 @@ notepad $PROFILE                  # создать/править (5.1)
 | Команда | Назначение | Пример | Важные замечания |
 |---|---|---|---|
 | `Get-Location` / `pwd` | Текущий каталог | `Get-Location` | |
-| `Set-Location` / `cd` | Сменить каталог | `Set-Location C:\projects` | `cd ..`, `cd ~` (домашний), `cd -` **нет** в 5.1; в 7+ есть `Push-Location`/`Pop-Location` |
-| `Push-Location` / `Pop-Location` | Стек каталогов | `Push-Location $env:TEMP; Pop-Location` | Аналог `pushd`/`popd` |
+| `Set-Location` / `cd` | Сменить каталог | `Set-Location C:\projects` | `cd ..`, `cd ~` (домашний). Bash-стиль `cd -` (предыдущий каталог) в PowerShell **нет** ни в 5.1, ни в 7+ |
+| `Push-Location` / `Pop-Location` | Стек каталогов | `Push-Location $env:TEMP; Pop-Location` | Аналог `pushd`/`popd`. Есть и в **5.1**, и в **7+** |
 | `Get-ChildItem` / `gci` / `ls` / `dir` | Список файлов | `Get-ChildItem -Force` | `-Force` показывает скрытые. `-Recurse` — вглубь |
 | `Get-ChildItem -Filter` | Фильтр по маске (быстрее) | `Get-ChildItem -Filter *.md` | `-Include` требует `-Recurse` или завершающий `*` в пути |
 | `New-Item` | Создать файл или каталог | `New-Item -ItemType Directory -Path logs -Force` | `-ItemType File` для файла |
@@ -87,8 +87,8 @@ notepad $PROFILE                  # создать/править (5.1)
 | `Remove-Item` | Удалить | `Remove-Item temp.log` | ⚠️ **Опасно.** `-Recurse -Force` удаляет дерево без корзины |
 | `Remove-Item -WhatIf` | Показать, что было бы удалено | `Remove-Item *.tmp -WhatIf` | Всегда пробуйте `-WhatIf` перед массовым удалением |
 | `Get-Content` | Прочитать файл | `Get-Content .\README.md -TotalCount 20` | `-Tail 50`, `-Wait` (как `tail -f`) |
-| `Set-Content` / `Add-Content` | Записать / дописать | `Set-Content out.txt 'hello'` | ⚠️ `Set-Content` перезаписывает. Кодировка: в 5.1 часто UTF-16LE; в 7 — UTF-8 без BOM. Явно: `-Encoding utf8` |
-| `Out-File` | Записать вывод команды | `Get-ChildItem \| Out-File list.txt -Encoding utf8` | |
+| `Set-Content` / `Add-Content` | Записать / дописать | `Set-Content out.txt 'hello' -Encoding utf8` | ⚠️ Перезаписывает. По умолчанию в 5.1 часто UTF-16LE; в 7+ — UTF-8 без BOM. В **5.1** `-Encoding utf8` пишет UTF-8 **с BOM**; без BOM: `[IO.File]::WriteAllText($path, $text, [Text.UTF8Encoding]::new($false))`. В **7+**: `-Encoding utf8` (без BOM) или `utf8BOM` |
+| `Out-File` | Записать вывод команды | `Get-ChildItem \| Out-File list.txt -Encoding utf8` | Та же оговорка про BOM в 5.1, что у `Set-Content` |
 | `Select-String` | Поиск по тексту (как grep) | `Select-String -Path *.md -Pattern 'TODO'` | `-Recurse` через `Get-ChildItem -Recurse \| Select-String` |
 | `Select-String -Context` | Контекст вокруг совпадения | `Select-String -Path app.log -Pattern ERROR -Context 2,2` | |
 | `Test-Path` | Существует ли путь | `Test-Path .\README.md` | `$true`/`$false` |
@@ -288,7 +288,7 @@ wsl -d Ubuntu -- bash -lc "cd /mnt/c/Users/$env:USERNAME/Documents/Личное/
 | Переместить | `mv a b` | `Move-Item a b` |
 | Удалить | `rm -rf dir` | `Remove-Item dir -Recurse -Force` ⚠️ |
 | Прочитать файл | `cat f` / `less f` | `Get-Content f` |
-| Найти в файлах | `grep -rn PAT` | `Select-String -Path * -Pattern PAT -Recurse` (через `gci`) |
+| Найти в файлах | `grep -rn PAT` | `Get-ChildItem -Recurse -File \| Select-String -Pattern PAT` |
 | Переменная окружения | `export A=1` | `$env:A = '1'` |
 | Конвейер | текст по строкам | объекты (свойства сохраняются) |
 | Код выхода | `$?` | `$?` (успех последней **cmdlet**); для exe — `$LASTEXITCODE` |
@@ -428,7 +428,7 @@ python -m pytest -q
 | `bash` открывает WSL с ошибкой «нет дистрибутива» | В `PATH` первым идёт `bash.exe` от WSL | Вызывайте Git Bash полным путём или установите дистрибутив WSL |
 | `$LASTEXITCODE` пуст / старый | Смотрели код после cmdlet, а не после exe | Проверяйте сразу после `git`/`docker`/`python` |
 | `ls` не понимает `-la` | Это алиас `Get-ChildItem`, не GNU ls | `Get-ChildItem -Force` или `Get-ChildItem \| Format-List` |
-| Кириллица «ломается» в файле | Кодировка 5.1 по умолчанию | `Set-Content -Encoding utf8` / `-Encoding utf8BOM` в 7+ |
+| Кириллица «ломается» в файле | Кодировка 5.1 по умолчанию (часто UTF-16LE) | Явно задайте кодировку. 5.1: `-Encoding utf8` даёт UTF-8 **с BOM**; без BOM — через `[Text.UTF8Encoding]::new($false)`. 7+: `-Encoding utf8` (без BOM) или `utf8BOM` |
 | `&&` не работает в 5.1 | Цепочки команд — фича 7+ | `; if ($?) { … }` или обновитесь до pwsh 7 |
 | `$IsWindows` не найден | Переменная есть только в 7+ | `$env:OS -eq 'Windows_NT'` |
 | `Activate.ps1` не находится | Другая структура venv или не создан | `py -3 -m venv .venv` заново; путь `Scripts\Activate.ps1` на Windows |
@@ -446,7 +446,7 @@ python -m pytest -q
 | Операторы `&&` `\|\|` | Нет | Есть |
 | Тернарный `? :`, `??`, `?.` | Нет | Есть |
 | `ForEach-Object -Parallel` | Нет | Есть |
-| Кодировка `Set-Content` по умолчанию | Часто UTF-16LE | UTF-8 без BOM |
+| Кодировка `Set-Content` по умолчанию | Часто UTF-16LE; `-Encoding utf8` → UTF-8 **с BOM** | UTF-8 без BOM (`utf8`); с BOM — `utf8BOM` |
 | Запуск | `powershell.exe` | `pwsh.exe` |
 | Модули галереи | `Install-Module` (часто TLS 1.2 нужно включить) | `Install-Module` / `Install-PSResource` |
 | Алиасы Unix | Ограничены | Больше совместимости, но всё равно объекты |

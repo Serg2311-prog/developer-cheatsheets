@@ -61,8 +61,8 @@ done
 if command -v shellcheck >/dev/null 2>&1; then
   run_check "shellcheck" shellcheck "$examples_dir"/bash/*.sh "$examples_dir"/git/*.sh "$examples_dir"/check_all.sh
 else
-  printf '  [SKIP] %s\n' "shellcheck не установлен (необязательная проверка)"
-  skipped=$((skipped + 1))
+  # Без STRICT — мягкий skip; при STRICT=1/CI skip() сделает FAIL (как pytest).
+  skip "shellcheck не установлен"
 fi
 run_check "safe_script_template.sh" bash "$examples_dir/bash/safe_script_template.sh" -n Тест a b
 run_check "log_stats.sh" bash "$examples_dir/bash/log_stats.sh"
@@ -128,8 +128,8 @@ fi
 
 echo
 echo "== PowerShell"
-# На Ubuntu/macOS это необязательная проверка (как ShellCheck): Windows-команды
-# и PSScriptAnalyzer гоняет отдельный job на windows-latest.
+# Отсутствие PowerShell на Ubuntu/macOS — необязательный skip (отдельный job windows-latest).
+# Если оболочка есть и включён STRICT/CI — передаём -Strict (PSScriptAnalyzer обязателен).
 ps_runner=""
 if command -v pwsh >/dev/null 2>&1; then
   ps_runner=pwsh
@@ -137,7 +137,11 @@ elif command -v powershell >/dev/null 2>&1; then
   ps_runner=powershell
 fi
 if [[ -n "$ps_runner" ]]; then
-  if output="$("$ps_runner" -NoProfile -NonInteractive -File "$examples_dir/powershell/Invoke-Checks.ps1" 2>&1)"; then
+  ps_args=(-NoProfile -NonInteractive -File "$examples_dir/powershell/Invoke-Checks.ps1")
+  if (( strict )); then
+    ps_args+=(-Strict)
+  fi
+  if output="$("$ps_runner" "${ps_args[@]}" 2>&1)"; then
     ok "Invoke-Checks.ps1"
   else
     fail "Invoke-Checks.ps1"

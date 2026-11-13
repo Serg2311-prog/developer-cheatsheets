@@ -38,6 +38,7 @@ try {
     }
 
     $greetingFile = Join-Path $workdir 'greeting.txt'
+    # 5.1: -Encoding UTF8 = UTF-8 с BOM; 7+: utf8 без BOM. Для учебного файла BOM допустим.
     Set-Content -Path $greetingFile -Value ("Привет, {0}!" -f $Name) -Encoding UTF8
     Get-Content -Path $greetingFile -Encoding UTF8
 
