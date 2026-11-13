@@ -24,7 +24,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $workdir = $null
 
-function Write-Log {
+function Write-ScriptLog {
     param([string] $Message)
     $ts = Get-Date -Format 'HH:mm:ss'
     Write-Host "[$ts] $Message" -ForegroundColor DarkGray
@@ -34,7 +34,7 @@ try {
     $workdir = Join-Path ([System.IO.Path]::GetTempPath()) ("pcs-safe-" + [guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $workdir | Out-Null
     if ($VerboseMsg) {
-        Write-Log "временный каталог: $workdir"
+        Write-ScriptLog "временный каталог: $workdir"
     }
 
     $greetingFile = Join-Path $workdir 'greeting.txt'
@@ -47,7 +47,7 @@ try {
     }
 
     if ($VerboseMsg) {
-        Write-Log 'готово, временный каталог будет удалён'
+        Write-ScriptLog 'готово, временный каталог будет удалён'
     }
     exit 0
 }
