@@ -1,3 +1,5 @@
+[![Проверки](https://github.com/Serg2311-prog/developer-cheatsheets/actions/workflows/check.yml/badge.svg)](https://github.com/Serg2311-prog/developer-cheatsheets/actions/workflows/check.yml)
+
 # Developer Cheatsheets
 
 **Главная** · [Bash](bash/README.md) · [Python](python/README.md) · [Git](git/README.md) · [Docker](docker/README.md) · [Примеры](examples/README.md) · [Источники](SOURCES.md)
