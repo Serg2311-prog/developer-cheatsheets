@@ -38,6 +38,7 @@ done
 shift $((OPTIND - 1))
 
 workdir="$(mktemp -d)"
+# shellcheck disable=SC2317,SC2329 # cleanup вызывается только через trap EXIT
 cleanup() { rm -rf -- "$workdir"; }
 trap cleanup EXIT
 trap 'log "сбой в строке $LINENO: $BASH_COMMAND"' ERR
