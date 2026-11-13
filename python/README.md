@@ -1,6 +1,6 @@
 # Python: справочник
 
-[Главная](../README.md) · [Bash](../bash/README.md) · **Python** · [Git](../git/README.md) · [Docker](../docker/README.md) · [Примеры](../examples/README.md) · [Источники](../SOURCES.md)
+[Главная](../README.md) · [Bash](../bash/README.md) · **Python** · [Git](../git/README.md) · [Docker](../docker/README.md) · [PowerShell](../powershell/README.md) · [Примеры](../examples/README.md) · [Источники](../SOURCES.md)
 
 Шпаргалка по Python 3.10+ (`match`, `list[str]`, объединение словарей `|`) и основным инструментам: pip, venv, pytest 8+. Проверено: Python 3.13.7, pytest 9.0.3. Примеры из таблиц можно вставить в REPL (`python`) и сразу проверить. Готовый проект для экспериментов лежит в [`examples/python`](../examples/python).
 

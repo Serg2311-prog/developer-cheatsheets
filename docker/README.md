@@ -1,6 +1,6 @@
 # Docker: справочник
 
-[Главная](../README.md) · [Bash](../bash/README.md) · [Python](../python/README.md) · [Git](../git/README.md) · **Docker** · [Примеры](../examples/README.md) · [Источники](../SOURCES.md)
+[Главная](../README.md) · [Bash](../bash/README.md) · [Python](../python/README.md) · [Git](../git/README.md) · **Docker** · [PowerShell](../powershell/README.md) · [Примеры](../examples/README.md) · [Источники](../SOURCES.md)
 
 Шпаргалка по Docker Engine 23+ и Docker Compose v2 (команда `docker compose` с пробелом). Проверено: Docker CLI 29.3, Compose v5.1.1; `docker compose config` не требует запущенного daemon. Сборка и запуск учебного образа проверяются в GitHub Actions. Учебный проект с `Dockerfile` и `compose.yaml` лежит в [`examples/docker`](../examples/docker).
 
@@ -442,4 +442,4 @@ docker image prune                     # убрать старые «висяч�
 
 ---
 
-[← Git](../git/README.md) · [↑ К оглавлению](#оглавление) · [Примеры →](../examples/README.md)
+[← Git](../git/README.md) · [↑ К оглавлению](#оглавление) · [PowerShell →](../powershell/README.md)

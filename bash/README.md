@@ -1,6 +1,6 @@
 # Bash: справочник
 
-[Главная](../README.md) · **Bash** · [Python](../python/README.md) · [Git](../git/README.md) · [Docker](../docker/README.md) · [Примеры](../examples/README.md) · [Источники](../SOURCES.md)
+[Главная](../README.md) · **Bash** · [Python](../python/README.md) · [Git](../git/README.md) · [Docker](../docker/README.md) · [PowerShell](../powershell/README.md) · [Примеры](../examples/README.md) · [Источники](../SOURCES.md)
 
 Шпаргалка по командной строке Bash и стандартным утилитам GNU. Минимальная версия: Bash 4.0 (`declare -A`, `${var^^}`). Проверено: 5.2.37 в Git Bash для Windows. Отличия Git Bash и WSL вынесены в отдельные разделы.
 

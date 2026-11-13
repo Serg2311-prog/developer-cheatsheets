@@ -64,3 +64,30 @@ jobs:
           python3 -c "import json,sys; a=json.loads(sys.argv[1]); b=json.loads(sys.argv[2]); assert a['visits']==1 and b['visits']==2, (a,b)" "$first" "$second"
           docker compose --profile tools run --rm checker
           docker compose down
+
+  powershell:
+    name: PowerShell-скрипты
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Установить PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+          if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
+            Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
+          }
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force -AllowClobber
+          Get-Module -ListAvailable PSScriptAnalyzer | Select-Object -First 1 | Format-List Name, Version
+
+      - name: Синтаксис, анализатор и примеры
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          & pwsh -NoProfile -NonInteractive -File examples/powershell/Invoke-Checks.ps1 -Strict

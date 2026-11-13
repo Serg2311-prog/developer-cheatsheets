@@ -1,8 +1,8 @@
 # Примеры
 
-[Главная](../README.md) · [Bash](../bash/README.md) · [Python](../python/README.md) · [Git](../git/README.md) · [Docker](../docker/README.md) · **Примеры** · [Источники](../SOURCES.md)
+[Главная](../README.md) · [Bash](../bash/README.md) · [Python](../python/README.md) · [Git](../git/README.md) · [Docker](../docker/README.md) · [PowerShell](../powershell/README.md) · **Примеры** · [Источники](../SOURCES.md)
 
-Небольшие рабочие примеры к разделам справочника. Каждый можно запустить и проверить. Все команды ниже выполняются из **корня репозитория** в Bash (Linux, macOS, WSL или Git Bash).
+Небольшие рабочие примеры к разделам справочника. Каждый можно запустить и проверить. Команды Bash ниже выполняются из **корня репозитория** (Linux, macOS, WSL или Git Bash). PowerShell-примеры — в Windows PowerShell 5.1 или `pwsh` 7+.
 
 ## Оглавление
 
@@ -11,6 +11,7 @@
 - [Python](#python)
 - [Git](#git)
 - [Docker](#docker)
+- [PowerShell](#powershell)
 
 ## Проверить всё одной командой
 
@@ -18,7 +19,7 @@
 bash examples/check_all.sh
 ```
 
-Скрипт проверяет синтаксис всех `.sh` (и прогоняет ShellCheck, если он установлен), запускает Bash- и Git-примеры во временных каталогах, компилирует Python-код, запускает pytest, проверяет внутренние ссылки Markdown и `compose.yaml` через `docker compose config`. Если инструмента нет, проверка помечается как `[SKIP]`. В CI и при `STRICT=1` пропуск **обязательной** проверки (Bash-примеры, Git, Python/pytest, ссылки, `docker compose config`) — это ошибка, а не молчаливый успех. ShellCheck остаётся необязательным.
+Скрипт проверяет синтаксис всех `.sh` (и прогоняет ShellCheck, если он установлен), запускает Bash- и Git-примеры во временных каталогах, компилирует Python-код, запускает pytest, проверяет внутренние ссылки Markdown и `compose.yaml` через `docker compose config`. Если доступен `pwsh` или `powershell`, вызывается [`powershell/Invoke-Checks.ps1`](powershell/Invoke-Checks.ps1). Если инструмента нет, проверка помечается как `[SKIP]`. В CI и при `STRICT=1` пропуск **обязательной** проверки (Bash-примеры, Git, Python/pytest, ссылки, `docker compose config`) — это ошибка, а не молчаливый успех. ShellCheck и PowerShell на Ubuntu остаются необязательными; полный прогон PowerShell с PSScriptAnalyzer — в GitHub Actions на `windows-latest`.
 
 Скрипт ничего не меняет вне временных каталогов и не собирает Docker-образы. Python ищется по порядку: `python3`, `python`, `py`.
 
@@ -124,6 +125,27 @@ DATA_DIR=./data PORT=8000 python app.py
 curl http://localhost:8000/health    # {"status": "ok"}
 ```
 
+## PowerShell
+
+Каталог [`powershell/`](powershell) — примеры к [разделу PowerShell](../powershell/README.md). Скрипты совместимы с **Windows PowerShell 5.1** и **PowerShell 7+**. Ничего не удаляют у других проектов: временные каталоги только свои, Docker — только чтение.
+
+| Файл | Что показывает | Запуск |
+|---|---|---|
+| [`powershell/safe_script_template.ps1`](powershell/safe_script_template.ps1) | `param`, `$ErrorActionPreference = 'Stop'`, `try/catch/finally`, временный каталог | `powershell -NoProfile -File examples/powershell/safe_script_template.ps1 -Name Сергей -VerboseMsg a b` |
+| [`powershell/system_info.ps1`](powershell/system_info.ps1) | ОС, CPU, память, диски, топ процессов, слушающие порты | `powershell -NoProfile -File examples/powershell/system_info.ps1` |
+| [`powershell/check_git_repo.ps1`](powershell/check_git_repo.ps1) | Корень репозитория, ветка, `status -sb`, remote, `log`, опционально `gh` | `powershell -NoProfile -File examples/powershell/check_git_repo.ps1 -Path .` |
+| [`powershell/docker_diag.ps1`](powershell/docker_diag.ps1) | `docker version`/`info`/`ps`, `compose config` без `down`/`rm`/`prune` | `powershell -NoProfile -File examples/powershell/docker_diag.ps1` |
+| [`powershell/Invoke-Checks.ps1`](powershell/Invoke-Checks.ps1) | Парсер, PSScriptAnalyzer, запуск примеров | `powershell -NoProfile -File examples/powershell/Invoke-Checks.ps1 -Strict` |
+| [`powershell/PSScriptAnalyzerSettings.psd1`](powershell/PSScriptAnalyzerSettings.psd1) | Настройки анализатора (исключён `PSAvoidUsingWriteHost` для CLI) | — |
+
+```powershell
+# Установка анализатора (один раз, CurrentUser):
+Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+
+# Полная проверка примеров PowerShell:
+powershell -NoProfile -File examples/powershell/Invoke-Checks.ps1 -Strict
+```
+
 ---
 
-[← Docker](../docker/README.md) · [↑ К оглавлению](#оглавление) · [Источники →](../SOURCES.md)
+[← PowerShell](../powershell/README.md) · [↑ К оглавлению](#оглавление) · [Источники →](../SOURCES.md)

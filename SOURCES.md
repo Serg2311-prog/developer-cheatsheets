@@ -1,8 +1,8 @@
 # Источники
 
-[Главная](README.md) · [Bash](bash/README.md) · [Python](python/README.md) · [Git](git/README.md) · [Docker](docker/README.md) · [Примеры](examples/README.md) · **Источники**
+[Главная](README.md) · [Bash](bash/README.md) · [Python](python/README.md) · [Git](git/README.md) · [Docker](docker/README.md) · [PowerShell](powershell/README.md) · [Примеры](examples/README.md) · **Источники**
 
-Справочник написан самостоятельно, тексты из перечисленных источников не копировались. Ниже — официальная документация, по которой стоит сверяться: поведение команд и значения по умолчанию меняются от версии к версии. Встроенная справка всегда соответствует установленной у вас версии: `man КОМАНДА`, `КОМАНДА --help`, `help ВСТРОЕННАЯ_КОМАНДА` в Bash, `git help КОМАНДА`, `docker КОМАНДА --help`, `python -m pydoc МОДУЛЬ`.
+Справочник написан самостоятельно, тексты из перечисленных источников не копировались. Ниже — официальная документация, по которой стоит сверяться: поведение команд и значения по умолчанию меняются от версии к версии. Встроенная справка всегда соответствует установленной у вас версии: `man КОМАНДА`, `КОМАНДА --help`, `help ВСТРОЕННАЯ_КОМАНДА` в Bash, `Get-Help КОМАНДА` в PowerShell, `git help КОМАНДА`, `docker КОМАНДА --help`, `python -m pydoc МОДУЛЬ`.
 
 ## Оглавление
 
@@ -10,6 +10,7 @@
 - [Python](#python)
 - [Git](#git)
 - [Docker](#docker)
+- [PowerShell](#powershell)
 
 ## Bash и командная строка
 
@@ -88,6 +89,23 @@
 | [Справочник файла Compose](https://docs.docker.com/reference/compose-file/) | Ключи `services`, `volumes`, `networks`, `profiles`, `depends_on` |
 | [Справочник `docker compose`](https://docs.docker.com/reference/cli/docker/compose/) | Команды `up`, `down`, `run`, `exec`, `logs`, `config` |
 | [Docker Desktop и WSL 2](https://docs.docker.com/desktop/features/wsl/) | Настройка движка WSL 2 и интеграция с дистрибутивами |
+
+## PowerShell
+
+| Ресурс | Что там искать |
+|---|---|
+| [Документация PowerShell (Microsoft Learn)](https://learn.microsoft.com/ru-ru/powershell/) | Обзор, установка PowerShell 7, руководства |
+| [Справочник PowerShell](https://learn.microsoft.com/ru-ru/powershell/module/) | Cmdlet по модулям |
+| [`Get-Help`](https://learn.microsoft.com/ru-ru/powershell/module/microsoft.powershell.core/get-help) | Встроенная справка |
+| [about_Pipelines](https://learn.microsoft.com/ru-ru/powershell/module/microsoft.powershell.core/about/about_pipelines) | Конвейеры объектов |
+| [about_Execution_Policies](https://learn.microsoft.com/ru-ru/powershell/module/microsoft.powershell.core/about/about_execution_policies) | `RemoteSigned`, `Bypass`, области политики |
+| [about_Functions](https://learn.microsoft.com/ru-ru/powershell/module/microsoft.powershell.core/about/about_functions) | Функции и `CmdletBinding` |
+| [about_Try_Catch_Finally](https://learn.microsoft.com/ru-ru/powershell/module/microsoft.powershell.core/about/about_try_catch_finally) | Обработка ошибок |
+| [Миграция с Windows PowerShell 5.1 на 7](https://learn.microsoft.com/ru-ru/powershell/scripting/whats-new/migrating-from-windows-powershell-51-to-powershell-7) | Различия 5.1 и 7+ |
+| [PSScriptAnalyzer](https://learn.microsoft.com/ru-ru/powershell/utility-modules/psscriptanalyzer/overview) | Статический анализ `.ps1` |
+| [GitHub CLI](https://cli.github.com/manual/) | `gh auth`, `gh run`, `gh repo` |
+| [Основные команды WSL](https://learn.microsoft.com/ru-ru/windows/wsl/basic-commands) | `wsl --list`, `--shutdown`, `--export` |
+| [Конфигурация `.wslconfig`](https://learn.microsoft.com/ru-ru/windows/wsl/wsl-config) | `memory`, `swap`, `processors` |
 
 ---
 

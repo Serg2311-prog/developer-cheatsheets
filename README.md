@@ -2,9 +2,9 @@
 
 # Developer Cheatsheets
 
-**Главная** · [Bash](bash/README.md) · [Python](python/README.md) · [Git](git/README.md) · [Docker](docker/README.md) · [Примеры](examples/README.md) · [Источники](SOURCES.md)
+**Главная** · [Bash](bash/README.md) · [Python](python/README.md) · [Git](git/README.md) · [Docker](docker/README.md) · [PowerShell](powershell/README.md) · [Примеры](examples/README.md) · [Источники](SOURCES.md)
 
-Русскоязычный справочник по четырём инструментам, с которыми разработчик работает каждый день: **Bash**, **Python**, **Git** и **Docker**. Для каждой команды указаны назначение, проверяемый пример и подводные камни. Кроме таблиц, в каждом разделе есть практические сценарии и разбор частых ошибок. Команды, которые могут уничтожить данные, явно помечены.
+Русскоязычный справочник по инструментам, с которыми разработчик работает каждый день: **Bash**, **Python**, **Git**, **Docker** и **PowerShell**. Для каждой команды указаны назначение, проверяемый пример и подводные камни. Кроме таблиц, в каждом разделе есть практические сценарии и разбор частых ошибок. Команды, которые могут уничтожить данные, явно помечены.
 
 ## Оглавление
 
@@ -25,6 +25,7 @@
 | [Python](python/README.md) | Синтаксис, коллекции, функции, классы, исключения, pathlib, JSON, pip, venv, запуск модулей, pytest | [venv](python/README.md#venv) |
 | [Git](git/README.md) | init, clone, add, commit, status, log, diff, branch, switch, merge, rebase, stash, reset, restore, remote, pull, push, конфликты | [Конфликт слияния](git/README.md#конфликт-слияния) |
 | [Docker](docker/README.md) | Образы, контейнеры, build, run, exec, logs, тома, сети, Docker Compose, диагностика и очистка | [Docker Compose](docker/README.md#docker-compose) |
+| [PowerShell](powershell/README.md) | Основы, файлы, Windows, Git/gh, Python, Docker Desktop, WSL2, отличия от Bash, скрипты и безопасность | [PowerShell и Bash: эквиваленты](powershell/README.md#powershell-и-bash-эквиваленты) |
 | [Примеры](examples/README.md) | Рабочие скрипты и мини-проекты к каждому разделу и скрипт проверки | [Проверить всё одной командой](examples/README.md#проверить-всё-одной-командой) |
 | [Источники](SOURCES.md) | Ссылки на официальную документацию | — |
 
@@ -99,6 +100,21 @@
 [Сценарии](docker/README.md#практические-сценарии) ·
 [Частые ошибки](docker/README.md#частые-ошибки)
 
+**[PowerShell](powershell/README.md)**
+[Основы](powershell/README.md#основы) ·
+[Навигация и файлы](powershell/README.md#навигация-и-файлы) ·
+[Windows](powershell/README.md#работа-с-windows) ·
+[Git и GitHub CLI](powershell/README.md#git-и-github-cli) ·
+[Python](powershell/README.md#python-из-powershell) ·
+[Docker Desktop](powershell/README.md#docker-desktop) ·
+[WSL2](powershell/README.md#wsl2) ·
+[Эквиваленты Bash](powershell/README.md#powershell-и-bash-эквиваленты) ·
+[Скрипты](powershell/README.md#скрипты-ошибки-функции) ·
+[Безопасность](powershell/README.md#безопасность) ·
+[Сценарии](powershell/README.md#практические-сценарии) ·
+[Частые ошибки](powershell/README.md#частые-ошибки) ·
+[5.1 и 7+](powershell/README.md#различия-51-и-7)
+
 ## Условные обозначения
 
 | Обозначение | Значение |
@@ -124,7 +140,7 @@
 bash examples/check_all.sh
 ```
 
-Скрипт проверяет синтаксис Bash-скриптов, запускает Bash- и Git-примеры во временных каталогах, тесты pytest, внутренние ссылки Markdown и `docker compose config`. Локально отсутствующий инструмент помечается `[SKIP]`. В CI (`STRICT=1`) пропуск обязательной проверки — это ошибка. Подробности — в [examples/README.md](examples/README.md). GitHub Actions дополнительно собирает и запускает Docker-пример.
+Скрипт проверяет синтаксис Bash-скриптов, запускает Bash- и Git-примеры во временных каталогах, тесты pytest, внутренние ссылки Markdown и `docker compose config`. Если доступен PowerShell, дополнительно вызывается `examples/powershell/Invoke-Checks.ps1` (на Ubuntu в CI это необязательный skip). Локально отсутствующий инструмент помечается `[SKIP]`. В CI (`STRICT=1`) пропуск обязательной проверки — это ошибка. Подробности — в [examples/README.md](examples/README.md). GitHub Actions дополнительно собирает Docker-пример и на `windows-latest` прогоняет PowerShell-скрипты через PSScriptAnalyzer.
 
 ## Структура репозитория
 
@@ -137,16 +153,18 @@ developer-cheatsheets/
 ├── python/README.md        # Python, pip, venv, pytest
 ├── git/README.md           # Git и разрешение конфликтов
 ├── docker/README.md        # Docker и Docker Compose
+├── powershell/README.md    # PowerShell 5.1 / 7+, Windows, WSL2
 ├── examples/
 │   ├── README.md           # описание примеров
 │   ├── check_all.sh        # проверка всех примеров
 │   ├── bash/               # шаблон скрипта, статистика по логам, резервное копирование
 │   ├── python/             # CLI-приложение заметок + тесты pytest
 │   ├── git/                # конфликт слияния, выбор стороны, reflog
-│   └── docker/             # Dockerfile, compose.yaml и HTTP-сервис
+│   ├── docker/             # Dockerfile, compose.yaml и HTTP-сервис
+│   └── powershell/         # диагностика системы, Git, Docker; PSScriptAnalyzer
 ├── tools/                  # проверка внутренних ссылок Markdown
-├── .github/workflows/      # GitHub Actions
-├── .gitattributes          # LF для .sh, Dockerfile и YAML
+├── .github/workflows/      # GitHub Actions (Ubuntu + Windows для PowerShell)
+├── .gitattributes          # LF для .sh, .ps1, Dockerfile и YAML
 └── .gitignore
 ```
 
@@ -160,10 +178,11 @@ developer-cheatsheets/
 | Python | 3.10 (`match`, `list[str]`, `dict \| dict`) | 3.13.7 |
 | pytest | 8.0 | 9.0.3 |
 | Git | 2.28 (`git init -b`; `switch`/`restore` — с 2.23, `zdiff3` — с 2.35) | 2.51.2 (Windows) |
-| Docker | Engine 23+, Compose v2 (`docker compose` с пробелом) | CLI 29.3, Compose v5.1.1; `compose config` без daemon. Сборка образа — в GitHub Actions. Локальный Docker daemon **не был запущен** |
+| Docker | Engine 23+, Compose v2 (`docker compose` с пробелом) | CLI 29.3, Compose v5.1.1; `compose config` без daemon. Сборка образа — в GitHub Actions |
+| PowerShell | 5.1 (Windows PowerShell) и 7+ (`pwsh`); различия отмечены в разделе | 5.1.26100; PSScriptAnalyzer в job на `windows-latest` |
 
-В Windows команды Bash выполняйте в **Git Bash** или **WSL**, а не в PowerShell. Особенности обеих сред описаны в разделах [Git Bash в Windows](bash/README.md#git-bash-в-windows) и [WSL](bash/README.md#wsl). Дистрибутив WSL с Bash в этой среде не установлен, поэтому примеры прогнаны в Git Bash, а не в WSL.
+В Windows команды Bash выполняйте в **Git Bash** или **WSL**. Справочник по оболочке Windows — в [PowerShell](powershell/README.md). Особенности Git Bash и WSL: [Git Bash в Windows](bash/README.md#git-bash-в-windows), [WSL](bash/README.md#wsl), [WSL2 в PowerShell](powershell/README.md#wsl2).
 
 ## Лицензия
 
-Собственный текст справочника и код в `examples/` распространяются по лицензии [MIT](LICENSE). Это разрешает использование, копирование и изменение при сохранении уведомления об авторском праве. Официальная документация Bash, Python, Git и Docker, на которую ссылается [SOURCES.md](SOURCES.md), принадлежит их правообладателям и здесь не воспроизводится.
+Собственный текст справочника и код в `examples/` распространяются по лицензии [MIT](LICENSE). Это разрешает использование, копирование и изменение при сохранении уведомления об авторском праве. Официальная документация Bash, Python, Git, Docker и PowerShell, на которую ссылается [SOURCES.md](SOURCES.md), принадлежит их правообладателям и здесь не воспроизводится.

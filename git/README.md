@@ -1,6 +1,6 @@
 # Git: справочник
 
-[Главная](../README.md) · [Bash](../bash/README.md) · [Python](../python/README.md) · **Git** · [Docker](../docker/README.md) · [Примеры](../examples/README.md) · [Источники](../SOURCES.md)
+[Главная](../README.md) · [Bash](../bash/README.md) · [Python](../python/README.md) · **Git** · [Docker](../docker/README.md) · [PowerShell](../powershell/README.md) · [Примеры](../examples/README.md) · [Источники](../SOURCES.md)
 
 Шпаргалка по Git 2.28+ (`git init -b`; `git switch`/`git restore` есть с 2.23, `merge.conflictStyle=zdiff3` — с 2.35). Проверено в Git 2.51.2 (Windows). Опасные команды можно безопасно потренировать в песочнице: [`examples/git/undo_demo.sh`](../examples/git/undo_demo.sh), [`examples/git/conflict_demo.sh`](../examples/git/conflict_demo.sh) и [`examples/git/choose_side_demo.sh`](../examples/git/choose_side_demo.sh).
 

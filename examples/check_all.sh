@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Проверяет все примеры справочника. Работает в Linux, macOS, WSL и Git Bash на Windows.
 # Ничего не меняет вне временных каталогов; Docker-образы не собирает и не запускает.
+# PowerShell-проверки запускаются при наличии pwsh/powershell и на Ubuntu в CI необязательны;
+# полный прогон с PSScriptAnalyzer — job windows-latest в GitHub Actions.
 #
 # Запуск из корня репозитория:
 #   bash examples/check_all.sh
@@ -122,6 +124,28 @@ if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; 
   run_check "docker compose config" docker compose -f "$examples_dir/docker/compose.yaml" config --quiet
 else
   skip "docker compose не установлен"
+fi
+
+echo
+echo "== PowerShell"
+# На Ubuntu/macOS это необязательная проверка (как ShellCheck): Windows-команды
+# и PSScriptAnalyzer гоняет отдельный job на windows-latest.
+ps_runner=""
+if command -v pwsh >/dev/null 2>&1; then
+  ps_runner=pwsh
+elif command -v powershell >/dev/null 2>&1; then
+  ps_runner=powershell
+fi
+if [[ -n "$ps_runner" ]]; then
+  if output="$("$ps_runner" -NoProfile -NonInteractive -File "$examples_dir/powershell/Invoke-Checks.ps1" 2>&1)"; then
+    ok "Invoke-Checks.ps1"
+  else
+    fail "Invoke-Checks.ps1"
+    printf '%s\n' "$output" | sed 's/^/         /'
+  fi
+else
+  printf '  [SKIP] %s\n' "PowerShell не установлен (необязательная проверка на этой ОС)"
+  skipped=$((skipped + 1))
 fi
 
 echo
