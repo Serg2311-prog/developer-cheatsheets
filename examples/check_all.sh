@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 # Проверяет все примеры справочника. Работает в Linux, macOS, WSL и Git Bash на Windows.
 # Ничего не меняет вне временных каталогов; Docker-образы не собирает и не запускает.
-# PowerShell-проверки запускаются при наличии pwsh/powershell и на Ubuntu в CI необязательны;
-# полный прогон с PSScriptAnalyzer — job windows-latest в GitHub Actions.
+# PowerShell: если pwsh/powershell есть — запускается Invoke-Checks.ps1
+# (при STRICT=1/CI с -Strict). Если оболочки нет (типичный Ubuntu) — мягкий skip;
+# полный прогон с PSScriptAnalyzer ещё и в job windows-latest.
 #
 # Запуск из корня репозитория:
 #   bash examples/check_all.sh
 #
-# STRICT=1 (или переменная CI) — отсутствие обязательных инструментов считается ошибкой,
-# а не пропуском. Так устроен GitHub Actions.
+# STRICT=1 (или CI=true) — отсутствие обязательных инструментов (включая ShellCheck,
+# pytest, docker compose и т.д.) считается ошибкой, а не пропуском.
 
 set -uo pipefail
 

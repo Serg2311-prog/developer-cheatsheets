@@ -193,20 +193,21 @@ if ($LASTEXITCODE -ne 0) { throw "git status завершился с кодом 
 
 | Команда | Назначение | Пример | Важные замечания |
 |---|---|---|---|
-| `Get-ExecutionPolicy -List` | Политики на всех уровнях | `Get-ExecutionPolicy -List` | Итоговая — самая жёсткая из применённых уровней |
+| `Get-ExecutionPolicy -List` | Политики по областям | `Get-ExecutionPolicy -List` | Эффективная политика — **не** «самая жёсткая», а первая заданная (не `Undefined`) по приоритету: `MachinePolicy` → `UserPolicy` → `Process` → `CurrentUser` → `LocalMachine`. Пример: `CurrentUser=RemoteSigned` перекрывает `LocalMachine=AllSigned` |
 | `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` | Разрешить локальные скрипты | `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` | Рекомендуемый минимум для разработки. Не требует админа |
-| `Set-ExecutionPolicy … MachinePolicy` | Политика через GPO | — | ⚠️ Меняет админ/домен; не трогайте без необходимости |
-| `powershell -NoProfile -ExecutionPolicy Bypass -File script.ps1` | Разовый обход для одного запуска | см. пример | Не отключает политику навсегда; используйте осознанно |
+| GPO `MachinePolicy` / `UserPolicy` | Политика через групповые политики | — | Задаётся админом/доменом через GPO, не через обычный `Set-ExecutionPolicy`. Перекрывает пользовательские области |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File script.ps1` | Разовый обход для одной сессии | см. пример | Задаёт область `Process` (выше `CurrentUser`/`LocalMachine`). Не меняет политику навсегда |
 | `Unblock-File` | Снять пометку Zone.Identifier | `Unblock-File .\Activate.ps1` | Нужно для файлов, скачанных из интернета, при `RemoteSigned` |
 
 ```powershell
-Get-ExecutionPolicy -List
-# Если CurrentUser = Undefined / Restricted:
+Get-ExecutionPolicy -List          # смотрите приоритет областей, не «жёсткость»
+Get-ExecutionPolicy                # эффективная политика текущей сессии
+# Если эффективная = Restricted / RemoteSigned мешает локальным скриптам:
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 .\.venv\Scripts\Activate.ps1
 ```
 
-PowerShell 7 (`pwsh`) на Windows тоже соблюдает ExecutionPolicy; на Linux/macOS политика не применяется так же.
+PowerShell 7 (`pwsh`) на Windows тоже соблюдает ExecutionPolicy; на Linux/macOS по умолчанию поведение близко к `Bypass`/`Unrestricted`, и `Set-ExecutionPolicy` политику там по сути не усиливает.
 
 ---
 
@@ -297,7 +298,9 @@ wsl -d Ubuntu -- bash -lc "cd /mnt/c/Users/$env:USERNAME/Documents/Личное/
 | Домашний каталог | `$HOME` / `~` | `$HOME` / `~` |
 | Корень диска | `/` | `C:\` (или `/` в pwsh на Linux) |
 | Справка | `man` / `--help` | `Get-Help` / `-?` |
-| Строгий скрипт | `set -euo pipefail` | `$ErrorActionPreference = 'Stop'` |
+| Строгий режим ошибок | `set -euo pipefail` | `$ErrorActionPreference = 'Stop'` + проверки `$LASTEXITCODE` / `Set-StrictMode` (см. ниже) |
+
+`$ErrorActionPreference = 'Stop'` — **не** полный эквивалент `set -euo pipefail`: `Stop` делает ошибки **cmdlet** завершающими (удобно для `try/catch`), но не повторяет `set -u` (запрет незаданных переменных) и не останавливает скрипт сам по себе при ненулевом коде **внешних** программ (`git`, `docker`, `python`) — их проверяют через `$LASTEXITCODE`. Ближе к «строгому» Bash: `$ErrorActionPreference = 'Stop'`, при необходимости `Set-StrictMode -Version Latest`, и явные проверки кода выхода exe.
 
 Алиасы `ls`, `cat`, `cp` в PowerShell **не** повторяют GNU-утилиты один в один: это другие команды с другими параметрами.
 
@@ -309,7 +312,7 @@ wsl -d Ubuntu -- bash -lc "cd /mnt/c/Users/$env:USERNAME/Documents/Личное/
 |---|---|---|---|
 | `param(…)` | Параметры скрипта/функции | см. ниже | Ставьте в начале файла или функции |
 | `[CmdletBinding()]` | Расширенные параметры (`-Verbose`, `-WhatIf`) | `[CmdletBinding(SupportsShouldProcess)]` | Нужен для `-WhatIf` в своих функциях |
-| `$ErrorActionPreference` | Поведение при ошибках cmdlet | `$ErrorActionPreference = 'Stop'` | `Stop` / `Continue` / `SilentlyContinue` / `Inquire` |
+| `$ErrorActionPreference` | Поведение при ошибках cmdlet | `$ErrorActionPreference = 'Stop'` | `Stop` / `Continue` / `SilentlyContinue` / `Inquire`. Не заменяет `set -u` и не читает `$LASTEXITCODE` внешних exe |
 | `try / catch / finally` | Обработка исключений | см. ниже | Ловит ошибки cmdlet при `Stop`; внешние exe проверяйте через `$LASTEXITCODE` |
 | `throw` | Выбросить ошибку | `throw 'нет файла'` | |
 | `trap` | Глобальный обработчик (редко) | `trap { Write-Error $_; continue }` | Обычно предпочитают `try/catch` |
